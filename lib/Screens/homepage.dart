@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             Text(
-              'Relax',
+              'Relaxaaaaaaaaaaaa',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 40.00,
