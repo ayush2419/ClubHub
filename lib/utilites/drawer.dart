@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-//left app drawer
-
 class LeftAppDraw extends StatefulWidget {
   const LeftAppDraw({ Key? key }) : super(key: key);
 
