@@ -39,12 +39,23 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: Center(
-        child: Text(
-          'Hello',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 40.00,
-          ),
+        child: Column(
+          children: [
+            Text(
+              'Relax',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 40.00,
+              ),
+            ),
+            Text(
+              'Bois',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 40.00,
+              ),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: BottomBar(), //Modify
