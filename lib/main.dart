@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 
       //First Screen to be displayed when the App starts
-      initialRoute: '/login',
+      initialRoute: '/home',
 
       //Routes of All pages(To be Modified)
       routes: {
