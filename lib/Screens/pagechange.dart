@@ -5,6 +5,7 @@ import 'package:club_hub/Screens/profilepage.dart';
 import 'package:club_hub/Screens/membershippage.dart';
 import 'package:club_hub/Screens/bookingpage.dart';
 import 'package:club_hub/utilites/scrollphysics.dart';
+import 'package:club_hub/utilites/drawer.dart';
 
 class PageChange extends StatefulWidget {
   @override
@@ -14,6 +15,7 @@ class PageChange extends StatefulWidget {
 class _PageChangeState extends State<PageChange> {
   PageController _pageController = PageController();
 
+  //List of Screens in PageView
   List<Widget> _screens = [
     HomePage(),
     BookingPage(),
@@ -21,6 +23,7 @@ class _PageChangeState extends State<PageChange> {
     ProfilePage(),
   ];
 
+  //Gives the current screen index (integer value)
   int _selectedIndex = 0;
   void _onPageChanged(int index) {
     setState(() {
@@ -28,10 +31,12 @@ class _PageChangeState extends State<PageChange> {
     });
   }
 
+  //Action for tapping the item on the bottom bar
   void _onItemTapped(int selectedIndex) {
     _pageController.jumpToPage(selectedIndex);
   }
 
+  //Function for setting the AppBar Title
   String setAppBarName(_selectedIndex) {
     if (_selectedIndex == 0)
       return 'ClubHub';
@@ -43,9 +48,11 @@ class _PageChangeState extends State<PageChange> {
       return 'Profile';
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         centerTitle: true,
         title: Text(
@@ -56,9 +63,14 @@ class _PageChangeState extends State<PageChange> {
               color: Colors.black),
         ),
         backgroundColor: Color(0xFFb3c8ff),
-        leading: Icon(
-          FontAwesomeIcons.bars,
-          color: Colors.black,
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: Icon(FontAwesomeIcons.bars),
+            color: Colors.black,
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          ),
         ),
         actions: [
           Icon(
@@ -70,6 +82,7 @@ class _PageChangeState extends State<PageChange> {
           ),
         ],
       ),
+      drawer: LeftAppDraw(),
       body: PageView(
         controller: _pageController,
         scrollDirection: Axis.horizontal,
