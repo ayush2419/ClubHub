@@ -4,6 +4,7 @@ import 'package:club_hub/Screens/homepage.dart';
 import 'package:club_hub/Screens/profilepage.dart';
 import 'package:club_hub/Screens/membershippage.dart';
 import 'package:club_hub/Screens/bookingpage.dart';
+import 'package:club_hub/utilites/scrollphysics.dart';
 
 class PageChange extends StatefulWidget {
   @override
@@ -74,7 +75,7 @@ class _PageChangeState extends State<PageChange> {
         scrollDirection: Axis.horizontal,
         children: _screens,
         onPageChanged: _onPageChanged,
-        //physics: NeverScrollableScrollPhysics(),
+        physics: const CustomPageViewScrollPhysics(),
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Color(0xFF425DF3),
