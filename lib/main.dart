@@ -1,4 +1,4 @@
-import 'package:club_hub/Screens/onboradingpage.dart';
+import 'package:club_hub/Screens/onboardingpage.dart';
 import 'package:club_hub/Screens/pagechange.dart';
 import 'package:flutter/material.dart';
 // import 'Screens/homepage.dart';
