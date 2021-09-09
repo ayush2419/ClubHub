@@ -1,3 +1,4 @@
+import 'package:club_hub/Screens/onboradingpage.dart';
 import 'package:club_hub/Screens/pagechange.dart';
 import 'package:flutter/material.dart';
 // import 'Screens/homepage.dart';
@@ -30,7 +31,8 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => ProfilePage(),
         'membership': (context) => MembershipPage(),
       },*/
-      home: PageChange(),
+      // home: PageChange(),
+      home: OnBoardingPage(),
     );
   }
 }
