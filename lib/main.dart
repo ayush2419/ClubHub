@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 // import 'Screens/profilepage.dart';
 // import 'Screens/bookingpage.dart';
 // import 'Screens/membershippage.dart';
-// import 'Screens/loginpage.dart';
+import 'Screens/loginpage.dart';
 // import 'Screens/signuppage.dart';
+import 'constants.dart';
 
 void main() {
   runApp(MyApp());
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(primaryColor: purple),
       //First Screen to be displayed when the App starts
       //initialRoute: '/home',
 
@@ -32,7 +34,7 @@ class MyApp extends StatelessWidget {
         'membership': (context) => MembershipPage(),
       },*/
       // home: PageChange(),
-      home: OnBoardingPage(),
+      home: LoginPage(),
     );
   }
 }
