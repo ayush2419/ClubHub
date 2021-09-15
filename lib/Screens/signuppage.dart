@@ -1,6 +1,7 @@
 import 'package:club_hub/Screens/pagechange.dart';
 import 'package:flutter/material.dart';
 import 'package:club_hub/constants.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -12,8 +13,10 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   late String _email;
   late String _password;
+  late String _confirmPassword;
   late String _phone;
   late String _fullName;
+  final _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -154,7 +157,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   TextField(
                     obscureText: true,
                     onChanged: (value) {
-                      this._password = value;
+                      this._confirmPassword = value;
                     },
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -183,13 +186,19 @@ class _SignUpPageState extends State<SignUpPage> {
               margin: EdgeInsets.symmetric(horizontal: 30.0),
               child: MaterialButton(
                 padding: EdgeInsets.symmetric(horizontal: 30.0),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => PageChange(),
-                    ),
-                  );
+                onPressed: () async {
+                  final newUser = await _auth.createUserWithEmailAndPassword(
+                      email: _email, password: _password);
+                  if (newUser != null && _password == _confirmPassword) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => PageChange(),
+                      ),
+                    );
+                  } else {
+                    print('Password and Confirm Password dont match');
+                  }
                 },
                 minWidth: MediaQuery.of(context).size.width,
                 color: purple,
