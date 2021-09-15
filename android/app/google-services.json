@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "107469564888",
+    "project_id": "clubhub-b4905",
+    "storage_bucket": "clubhub-b4905.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:107469564888:android:f8579bedfeda58b49da0ad",
+        "android_client_info": {
+          "package_name": "com.example.club_hub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "107469564888-u76bnjgbnmnsbfq9sepc8qjtb1tn1lum.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQbXPKzwoVzeIRDVduF9dmLSHb_-baGN4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "107469564888-u76bnjgbnmnsbfq9sepc8qjtb1tn1lum.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

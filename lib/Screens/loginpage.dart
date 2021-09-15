@@ -1,6 +1,8 @@
 import 'dart:ui';
 
+import 'package:club_hub/Screens/pagechange.dart';
 import 'package:club_hub/Screens/signuppage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:club_hub/constants.dart';
 
@@ -12,6 +14,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   late String _email;
   late String _password;
+  final _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -128,13 +131,18 @@ class _LoginPageState extends State<LoginPage> {
                     margin: EdgeInsets.symmetric(horizontal: 30.0),
                     child: MaterialButton(
                       padding: EdgeInsets.symmetric(horizontal: 30.0),
-                      onPressed: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (_) => PatientInfoForm2(),
-                        //   ),
-                        // );
+                      onPressed: () async {
+                        final user = await _auth.signInWithEmailAndPassword(
+                            email: _email, password: _password);
+
+                        if (user != null) {
+                          print(user);
+                          print('Signed In successfully!!!');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => PageChange()),
+                          );
+                        }
                       },
                       minWidth: MediaQuery.of(context).size.width,
                       color: purple,
@@ -148,9 +156,12 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: 20.0),
                   TextButton(
                     onPressed: () {
+                      // Navigator.pushNamed(context, './signup');
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => SignUpPage()),
+                        MaterialPageRoute(
+                          builder: (_) => SignUpPage(),
+                        ),
                       );
                     },
                     child: Text(
