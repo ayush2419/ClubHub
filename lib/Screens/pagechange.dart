@@ -1,3 +1,4 @@
+import 'package:club_hub/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:club_hub/Screens/homepage.dart';
@@ -57,10 +58,7 @@ class _PageChangeState extends State<PageChange> {
         centerTitle: true,
         title: Text(
           setAppBarName(_selectedIndex),
-          style: TextStyle(
-              fontSize: 40.00,
-              fontWeight: FontWeight.bold,
-              color: Colors.black),
+          style: TextStyle(fontSize: 25.00, color: darkPurple),
         ),
         backgroundColor: Color(0xFFb3c8ff),
         leading: Builder(
