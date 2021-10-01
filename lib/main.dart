@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
       },
       //home: BookingPage2(sportName: 'Badminton'),
       home: PageChange(),
-      //home: LoginPage(),
+      //home: SignUpPage(),
       //home: BookingPage(),
     );
   }
