@@ -224,6 +224,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           "Name": _fullName.text,
                           "Phone": _phone.text,
                           "Email": _email.text,
+                          "isMember": false,
                         };
 
                         await firebaseFirestore

@@ -36,9 +36,10 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => ProfilePage(),
         '/membership': (context) => MembershipPage(),
       },
-      //home: BookingPage2(sportName: 'Badminton'),
-      home: PageChange(),
-      //home: SignUpPage(),
+      // home: BookingPage2(sportName: 'Badminton'),
+      // home: PageChange(),
+      // home: SignUpPge(),
+      home: LoginPage(),
       //home: BookingPage(),
     );
   }

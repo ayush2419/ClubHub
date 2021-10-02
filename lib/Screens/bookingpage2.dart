@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:club_hub/Screens/pagechange.dart';
+import 'package:club_hub/Screens/payment.dart';
 import 'package:club_hub/constants.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,6 +10,7 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
+// ignore: must_be_immutable
 class BookingPage2 extends StatefulWidget {
   late String sportName;
   BookingPage2({required this.sportName});
@@ -16,22 +20,66 @@ class BookingPage2 extends StatefulWidget {
 
 class _BookingPage2State extends State<BookingPage2> {
   late List<String> dateList = [];
+  late List indexList = [];
+  int? seats10_11, seats11_12, seats12_1, seats1_2, seats2_3, seats3_4;
+  int seats = 0;
   bool is10_11Selected = false;
   bool is11_12Selected = false;
   bool is12_1Selected = false;
   bool is1_2Selected = false;
   bool is2_3Selected = false;
   bool is3_4Selected = false;
-  bool isDate_1_Selected = false;
-  bool isDate_2_Selected = false;
-  bool isDate_3_Selected = false;
   bool isMember = true;
   bool showSpinner = false;
+  late String selectedDocument = '';
+  late String? selectedDate = '';
+  late String? selectedTime = '';
+  late String? username;
+  late String? phone = '';
+  Map<String, dynamic>? map;
 
-  bool isSelected = false;
-  late String selectedDate = '';
+  void getCurrentUSer() async {
+    try {
+      await firebaseFirestore
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get()
+          .then((data) {
+        setState(() {
+          this.username = data.data()!['Name'];
+          this.phone = data.data()!['Phone'];
+        });
+      });
+    } catch (e) {
+      print(e);
+    }
 
-  void loadAvaialbleDates() async {
+    print(username);
+    print(phone);
+  }
+
+  void loadAvailableSeats() async {
+    await firebaseFirestore
+        .collection(widget.sportName)
+        .where('date', isEqualTo: selectedDate)
+        .get()
+        .then((doc) => {map = doc.docs[0].data()});
+
+    setState(() {
+      this.seats10_11 = map!['10-11'];
+      this.seats11_12 = map!['11-12'];
+      this.seats12_1 = map!['12-1'];
+
+      if (selectedTime == '10-11') this.seats = seats10_11!;
+      if (selectedTime == '11-12') this.seats = seats11_12!;
+      if (selectedTime == '12-1') this.seats = seats12_1!;
+    });
+
+    // seats10_11 = map!['10-11'];
+    // print(seats10_11);
+  }
+
+  void loadAvailableDates() async {
     setState(() {
       showSpinner = true;
     });
@@ -55,7 +103,8 @@ class _BookingPage2State extends State<BookingPage2> {
 
   @override
   void initState() {
-    loadAvaialbleDates();
+    getCurrentUSer();
+    loadAvailableDates();
     super.initState();
   }
 
@@ -89,19 +138,6 @@ class _BookingPage2State extends State<BookingPage2> {
                       SizedBox(
                         height: 20.0,
                       ),
-                      // GridView.count(
-                      //   shrinkWrap: true,
-                      //   physics: ClampingScrollPhysics(),
-                      //   crossAxisCount: 5,
-                      //   mainAxisSpacing: 10.0,
-                      //   childAspectRatio: 1,
-                      //   crossAxisSpacing: 10.0,
-                      //   children: [
-                      //     dateSelector('22 Sept', isDate_1_Selected),
-                      //     dateSelector('23 Sept', isDate_2_Selected),
-                      //     dateSelector('24 Sept', isDate_3_Selected),
-                      //   ],
-                      // ),
                       StreamBuilder(
                           stream: firebaseFirestore
                               .collection(widget.sportName)
@@ -123,7 +159,7 @@ class _BookingPage2State extends State<BookingPage2> {
                               children: snapshot.data!.docs.map((document) {
                                 return GestureDetector(
                                   child: dateSelector(
-                                      document['date'], is1_2Selected),
+                                      document['date'], document.id),
                                 );
                               }).toList(),
                             );
@@ -178,7 +214,7 @@ class _BookingPage2State extends State<BookingPage2> {
                         height: 20.0,
                       ),
                       Text(
-                        '5',
+                        seats.toString(),
                         style: TextStyle(fontSize: 20.0),
                       ),
                     ],
@@ -276,8 +312,63 @@ class _BookingPage2State extends State<BookingPage2> {
                     ],
                   ),
                 ),
-                Container(
-                  width: MediaQuery.of(context).size.width / 2,
+                MaterialButton(
+                  onPressed: () async {
+                    setState(() {
+                      showSpinner = true;
+                    });
+                    try {
+                      var docId, doc;
+                      Map<String, dynamic> data = <String, dynamic>{
+                        'Sport': widget.sportName,
+                        'Date': this.selectedDate,
+                        'Time': this.selectedTime,
+                      };
+
+                      await firebaseFirestore
+                          .collection('Users')
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
+                          .collection('Bookings')
+                          .doc()
+                          .set(data);
+
+                      await firebaseFirestore
+                          .collection(widget.sportName)
+                          .where('date', isEqualTo: selectedDate!)
+                          .get()
+                          .then((snapshot) {
+                        doc = snapshot.docs[0].data();
+                        docId = snapshot.docs[0].id;
+                        print(docId);
+                        print(doc);
+                      });
+
+                      print(doc['10-11']);
+                      print(selectedTime);
+
+                      await firebaseFirestore
+                          .collection(widget.sportName)
+                          .doc(docId)
+                          .update({selectedTime!: seats - 1});
+
+                      await firebaseFirestore
+                          .collection(widget.sportName)
+                          .doc(docId)
+                          .collection(selectedTime!)
+                          .add({
+                        'Name': this.username,
+                        'Contact no': this.phone
+                      });
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => Payment()));
+                      setState(() {
+                        showSpinner = false;
+                      });
+                    } catch (e) {
+                      print(e);
+                    }
+                  },
+                  minWidth: MediaQuery.of(context).size.width / 2,
                   height: 70.0,
                   color: Colors.greenAccent[700],
                   child: Row(
@@ -322,11 +413,50 @@ class _BookingPage2State extends State<BookingPage2> {
     );
   }
 
-  GestureDetector slotSelector(String timeSlot, selectedValue) {
+  GestureDetector dateSelector(String date, String documentID) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         setState(
           () {
+            this.selectedDate = date;
+            print(selectedDate);
+            this.selectedDocument = documentID;
+          },
+        );
+        loadAvailableSeats();
+        print(this.selectedDate);
+        print(this.selectedTime);
+        await Future.delayed(Duration(seconds: 2));
+        print(this.seats);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5.0),
+          border: Border.all(
+            color: selectedDocument == documentID ? darkPurple : tileColor,
+            width: 2,
+          ),
+          color: selectedDocument == documentID ? purple : backgroundColor,
+        ),
+        child: Center(
+          child: Text(
+            date,
+            style: TextStyle(
+                color: selectedDocument == documentID
+                    ? Colors.white
+                    : Colors.black),
+          ),
+        ),
+      ),
+    );
+  }
+
+  GestureDetector slotSelector(String timeSlot, selectedValue) {
+    return GestureDetector(
+      onTap: () async {
+        setState(
+          () {
+            this.selectedTime = timeSlot;
             if (timeSlot == '10-11') {
               this.is10_11Selected = !is10_11Selected;
               if (this.is10_11Selected) {
@@ -374,7 +504,6 @@ class _BookingPage2State extends State<BookingPage2> {
                 this.is11_12Selected = false;
                 this.is12_1Selected = false;
                 this.is1_2Selected = false;
-
                 this.is3_4Selected = false;
               }
             }
@@ -390,6 +519,12 @@ class _BookingPage2State extends State<BookingPage2> {
             }
           },
         );
+
+        loadAvailableSeats();
+        print(this.selectedDate);
+        print(this.selectedTime);
+        await Future.delayed(Duration(seconds: 2));
+        print(this.seats);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -405,57 +540,6 @@ class _BookingPage2State extends State<BookingPage2> {
             timeSlot,
             style:
                 TextStyle(color: selectedValue ? Colors.white : Colors.black),
-          ),
-        ),
-      ),
-    );
-  }
-
-  GestureDetector dateSelector(String date, selectedValue) {
-    return GestureDetector(
-      onTap: () {
-        setState(
-          () {
-            this.selectedDate = date;
-            this.isSelected = !isSelected;
-            print(date);
-            // if (date == '22 Sept') {
-            //   this.isDate_1_Selected = !isDate_1_Selected;
-            //   if (isDate_1_Selected == true) {
-            //     this.isDate_2_Selected = false;
-            //     this.isDate_3_Selected = false;
-            //   }
-            // }
-            // if (date == '23 Sept') {
-            //   this.isDate_2_Selected = !isDate_2_Selected;
-            //   if (isDate_2_Selected == true) {
-            //     this.isDate_1_Selected = false;
-            //     this.isDate_3_Selected = false;
-            //   }
-            // }
-            // if (date == '24 Sept') {
-            //   this.isDate_3_Selected = !isDate_3_Selected;
-            //   if (isDate_3_Selected == true) {
-            //     this.isDate_2_Selected = false;
-            //     this.isDate_1_Selected = false;
-            //   }
-            // }
-          },
-        );
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5.0),
-          border: Border.all(
-            color: isSelected ? darkPurple : tileColor,
-            width: 2,
-          ),
-          color: isSelected ? purple : backgroundColor,
-        ),
-        child: Center(
-          child: Text(
-            date,
-            style: TextStyle(color: isSelected ? Colors.white : Colors.black),
           ),
         ),
       ),
