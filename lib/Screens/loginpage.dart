@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:club_hub/Screens/adminLogin.dart';
 import 'package:club_hub/Screens/pagechange.dart';
 import 'package:club_hub/Screens/signuppage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,6 +22,14 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: backgroundColor,
       appBar: AppBar(
         backgroundColor: purple,
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (_) => AdminLogin()));
+              },
+              icon: Icon(Icons.admin_panel_settings))
+        ],
         title: Text(
           'ClubHub',
           style: TextStyle(fontSize: 25.0),
@@ -142,7 +150,10 @@ class _LoginPageState extends State<LoginPage> {
                             print('Signed In successfully!!!');
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (_) => PageChange()),
+                              MaterialPageRoute(
+                                  builder: (_) => PageChange(
+                                        isAdmin: false,
+                                      )),
                             );
                           }
                         },
@@ -167,8 +178,8 @@ class _LoginPageState extends State<LoginPage> {
                         );
                       },
                       child: Text(
-                        'Click here to sign up if you dont have an account',
-                        style: TextStyle(color: Colors.black),
+                        'Sign Up',
+                        style: TextStyle(color: Colors.blueAccent),
                       ),
                     ),
                   ],

@@ -139,31 +139,32 @@ class _BookingPage2State extends State<BookingPage2> {
                         height: 20.0,
                       ),
                       StreamBuilder(
-                          stream: firebaseFirestore
-                              .collection(widget.sportName)
-                              .snapshots(),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<QuerySnapshot> snapshot) {
-                            if (!snapshot.hasData) {
-                              return Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                            return GridView.count(
-                              shrinkWrap: true,
-                              physics: ClampingScrollPhysics(),
-                              crossAxisCount: 5,
-                              mainAxisSpacing: 10.0,
-                              childAspectRatio: 1,
-                              crossAxisSpacing: 10.0,
-                              children: snapshot.data!.docs.map((document) {
-                                return GestureDetector(
-                                  child: dateSelector(
-                                      document['date'], document.id),
-                                );
-                              }).toList(),
+                        stream: firebaseFirestore
+                            .collection(widget.sportName)
+                            .snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (!snapshot.hasData) {
+                            return Center(
+                              child: CircularProgressIndicator(),
                             );
-                          }),
+                          }
+                          return GridView.count(
+                            shrinkWrap: true,
+                            physics: ClampingScrollPhysics(),
+                            crossAxisCount: 5,
+                            mainAxisSpacing: 10.0,
+                            childAspectRatio: 1,
+                            crossAxisSpacing: 10.0,
+                            children: snapshot.data!.docs.map((document) {
+                              return GestureDetector(
+                                child:
+                                    dateSelector(document['date'], document.id),
+                              );
+                            }).toList(),
+                          );
+                        },
+                      ),
                       SizedBox(
                         height: 20.0,
                       ),

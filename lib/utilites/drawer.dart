@@ -1,7 +1,11 @@
+import 'package:club_hub/Screens/adminPanel.dart';
+import 'package:club_hub/Screens/bookingHistory.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class LeftAppDraw extends StatefulWidget {
+  bool isAdmin;
+  LeftAppDraw({required this.isAdmin});
   @override
   _LeftAppDrawState createState() => _LeftAppDrawState();
 }
@@ -33,11 +37,10 @@ class _LeftAppDrawState extends State<LeftAppDraw> {
             leading: Icon(
               FontAwesomeIcons.calendarCheck,
             ),
-            title: const Text('Booking'),
+            title: const Text('Booking History'),
             onTap: () {
-              // Update the state of the app.
-              // ...
-              Navigator.pop(context);
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => BookingHistory()));
             },
           ),
           ListTile(
@@ -61,6 +64,19 @@ class _LeftAppDrawState extends State<LeftAppDraw> {
               // ...
               Navigator.pop(context);
             },
+          ),
+          Visibility(
+            visible: widget.isAdmin,
+            child: ListTile(
+              leading: Icon(
+                Icons.admin_panel_settings,
+              ),
+              title: const Text('Admin'),
+              onTap: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (_) => AdminPanel()));
+              },
+            ),
           ),
         ],
       ),

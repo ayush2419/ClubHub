@@ -304,7 +304,7 @@ class _BookingPageState extends State<BookingPage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) =>
-                                      BookingPage2(sportName: 'E-games'),
+                                      BookingPage2(sportName: 'E-Games'),
                                 ));
                           },
                           child: Column(
@@ -318,7 +318,7 @@ class _BookingPageState extends State<BookingPage> {
                                 height: 10.0,
                               ),
                               Text(
-                                'E-games',
+                                'E-Games',
                                 style: TextStyle(
                                   fontSize: 20.0,
                                 ),

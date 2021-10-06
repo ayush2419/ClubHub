@@ -9,6 +9,8 @@ import 'package:club_hub/utilites/scrollphysics.dart';
 import 'package:club_hub/utilites/drawer.dart';
 
 class PageChange extends StatefulWidget {
+  bool? isAdmin;
+  PageChange({required this.isAdmin});
   @override
   _PageChangeState createState() => _PageChangeState();
 }
@@ -80,7 +82,9 @@ class _PageChangeState extends State<PageChange> {
           ),
         ],
       ),
-      drawer: LeftAppDraw(),
+      drawer: LeftAppDraw(
+        isAdmin: widget.isAdmin!,
+      ),
       body: PageView(
         controller: _pageController,
         scrollDirection: Axis.horizontal,
@@ -105,7 +109,7 @@ class _PageChangeState extends State<PageChange> {
             icon: Icon(
               FontAwesomeIcons.calendarCheck,
             ),
-            label: 'Book',
+            label: 'Booking',
             backgroundColor: Color(0xFFb3c8ff),
           ),
           BottomNavigationBarItem(

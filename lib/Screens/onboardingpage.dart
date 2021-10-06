@@ -47,7 +47,9 @@ class OnBoardingPage extends StatelessWidget {
 
   void goToHome(context) {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
-      builder: (_) => PageChange(),
+      builder: (_) => PageChange(
+        isAdmin: false,
+      ),
     ));
   }
 
