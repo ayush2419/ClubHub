@@ -1,3 +1,4 @@
+import 'package:club_hub/Admin/checkBookings.dart';
 import 'package:club_hub/Screens/bookingpage2.dart';
 import 'package:club_hub/Screens/pagechange.dart';
 import 'package:club_hub/constants.dart';
@@ -29,6 +30,7 @@ class _AdminPanelState extends State<AdminPanel> {
     'Golf',
     'E-Games'
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,11 +41,21 @@ class _AdminPanelState extends State<AdminPanel> {
           IconButton(
             onPressed: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => PageChange(
-                            isAdmin: true,
-                          )));
+                context,
+                MaterialPageRoute(builder: (_) => AdminCheckBooking()),
+              );
+            },
+            icon: Icon(Icons.sports),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => PageChange(
+                          isAdmin: true,
+                        )),
+              );
             },
             icon: Icon(Icons.home),
           ),

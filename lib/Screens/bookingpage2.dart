@@ -19,7 +19,6 @@ class BookingPage2 extends StatefulWidget {
 }
 
 class _BookingPage2State extends State<BookingPage2> {
-  late List<String> dateList = [];
   late List indexList = [];
   int? seats10_11, seats11_12, seats12_1, seats1_2, seats2_3, seats3_4;
   int seats = 0;
@@ -79,32 +78,9 @@ class _BookingPage2State extends State<BookingPage2> {
     // print(seats10_11);
   }
 
-  void loadAvailableDates() async {
-    setState(() {
-      showSpinner = true;
-    });
-    try {
-      await firebaseFirestore.collection(widget.sportName).get().then(
-            (snapshot) => {
-              snapshot.docs.forEach((doc) {
-                setState(() {
-                  dateList.add(doc.data()['date']);
-                });
-              })
-            },
-          );
-      setState(() {
-        showSpinner = false;
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-
   @override
   void initState() {
     getCurrentUSer();
-    loadAvailableDates();
     super.initState();
   }
 

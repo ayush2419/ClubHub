@@ -1,7 +1,7 @@
-import 'package:club_hub/Screens/adminPanel.dart';
 import 'package:club_hub/Screens/bookingHistory.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:club_hub/Admin/adminPanel.dart';
 
 class LeftAppDraw extends StatefulWidget {
   bool isAdmin;

@@ -1,4 +1,3 @@
-import 'package:club_hub/Screens/adminPanel.dart';
 import 'package:club_hub/Screens/bookingpage2.dart';
 import 'package:club_hub/Screens/onboardingpage.dart';
 import 'package:club_hub/Screens/pagechange.dart';

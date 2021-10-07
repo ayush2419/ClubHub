@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:club_hub/Screens/adminLogin.dart';
+import 'package:club_hub/Admin/adminLogin.dart';
 import 'package:club_hub/Screens/pagechange.dart';
 import 'package:club_hub/Screens/signuppage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
