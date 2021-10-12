@@ -1,5 +1,5 @@
 import 'package:club_hub/Screens/bookingpage2.dart';
-import 'package:club_hub/Screens/onboardingpage.dart';
+import 'package:club_hub/Screens/introductionPage.dart';
 import 'package:club_hub/Screens/pagechange.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +39,7 @@ class MyApp extends StatelessWidget {
       // home: BookingPage2(sportName: 'Badminton'),
       // home: PageChange(),
       // home: SignUpPge(),
+      // home: IntroductionPage(),
       home: LoginPage(),
       // home: AdminScreen(),
       //home: BookingPage(),

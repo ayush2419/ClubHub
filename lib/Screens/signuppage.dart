@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:club_hub/Screens/introductionPage.dart';
 import 'package:club_hub/Screens/pagechange.dart';
 import 'package:flutter/material.dart';
 import 'package:club_hub/constants.dart';
@@ -232,13 +233,17 @@ class _SignUpPageState extends State<SignUpPage> {
                             .doc(FirebaseAuth.instance.currentUser!.uid)
                             .set(data);
 
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (_) => PageChange(
+                        //       isAdmin: false,
+                        //     ),
+                        //   ),
+                        // );
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => PageChange(
-                              isAdmin: false,
-                            ),
-                          ),
+                          MaterialPageRoute(builder: (_) => IntroductionPage()),
                         );
                         setState(() {
                           showSpinner = false;
