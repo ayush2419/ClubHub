@@ -1,5 +1,7 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:club_hub/Admin/bookingList.dart';
+import 'package:club_hub/Admin/adminBookingList.dart';
 import 'package:club_hub/Screens/bookingpage2.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -20,8 +22,20 @@ class _AdminCheckBookingState extends State<AdminCheckBooking> {
     'Basketball',
     'Archery',
     'Golf',
-    'E-Games'
+    'E-Sports'
   ];
+  final sportImageList = [
+    'assets/Football_background.jfif',
+    'assets/LawnTennis.jfif',
+    'assets/Swimming.jfif',
+    'assets/Volleyball.jfif',
+    'assets/Basketball.jfif',
+    'assets/Archery.jfif',
+    'assets/Golf.jfif',
+    // 'assets/Gym.jpg',
+    'assets/Egames.jpg',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +46,7 @@ class _AdminCheckBookingState extends State<AdminCheckBooking> {
       body: Container(
         margin: EdgeInsets.only(top: 40.0),
         child: Container(
-          margin: EdgeInsets.fromLTRB(40.0, 0, 40.0, 40.0),
+          margin: EdgeInsets.fromLTRB(60.0, 0, 60.0, 40.0),
           child: ListView.builder(
             shrinkWrap: true,
             physics: ClampingScrollPhysics(),
@@ -40,31 +54,45 @@ class _AdminCheckBookingState extends State<AdminCheckBooking> {
             itemBuilder: (context, index) {
               return Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5.0),
-                  color: backgroundColor,
+                  borderRadius: BorderRadius.circular(10.0),
+                  image: DecorationImage(
+                      image: AssetImage(sportImageList[index]),
+                      fit: BoxFit.fill),
                 ),
                 margin: EdgeInsets.symmetric(vertical: 10.0),
                 height: 100.0,
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => AdminSelectDateAndTime(
-                            sportName: sportsList[index]),
+                child: ClipRRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        color: Colors.black.withOpacity(0.4),
                       ),
-                    );
-                  },
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        sportsList[index],
-                        style: TextStyle(
-                          fontSize: 20.0,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => AdminSelectDateAndTime(
+                                  sportName: sportsList[index]),
+                            ),
+                          );
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              sportsList[index],
+                              style: TextStyle(
+                                  fontSize: 22.0,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500),
+                            )
+                          ],
                         ),
-                      )
-                    ],
+                      ),
+                    ),
                   ),
                 ),
               );

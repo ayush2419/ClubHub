@@ -60,13 +60,13 @@ class _PageChangeState extends State<PageChange> {
         centerTitle: true,
         title: Text(
           setAppBarName(_selectedIndex),
-          style: TextStyle(fontSize: 25.00, color: darkPurple),
+          style: TextStyle(fontSize: 25.00, color: Colors.black),
         ),
         backgroundColor: Color(0xFFb3c8ff),
+        // backgroundColor: darkPurple,
         leading: Builder(
           builder: (context) => IconButton(
-            icon: Icon(FontAwesomeIcons.bars),
-            color: Colors.black,
+            icon: Icon(FontAwesomeIcons.bars, color: Colors.black),
             onPressed: () {
               Scaffold.of(context).openDrawer();
             },
@@ -93,8 +93,9 @@ class _PageChangeState extends State<PageChange> {
         physics: const CustomPageViewScrollPhysics(),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Color(0xFF425DF3),
-        unselectedItemColor: Colors.black,
+        elevation: 10,
+        selectedItemColor: darkPurple,
+        unselectedItemColor: Colors.black54,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const <BottomNavigationBarItem>[
@@ -121,7 +122,7 @@ class _PageChangeState extends State<PageChange> {
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              FontAwesomeIcons.user,
+              FontAwesomeIcons.userAlt,
             ),
             label: 'Profile',
             backgroundColor: Color(0xFFb3c8ff),

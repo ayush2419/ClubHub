@@ -92,7 +92,7 @@ class _AdminBookingListState extends State<AdminBookingList> {
                                   ],
                                 ),
                               ],
-                            )
+                            ),
                           ],
                         ),
                       );

@@ -1,4 +1,4 @@
-import 'package:club_hub/Admin/checkBookings.dart';
+import 'package:club_hub/Admin/adminCheckBookings.dart';
 import 'package:club_hub/Screens/bookingpage2.dart';
 import 'package:club_hub/Screens/pagechange.dart';
 import 'package:club_hub/constants.dart';

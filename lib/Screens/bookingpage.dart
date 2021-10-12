@@ -45,9 +45,10 @@ class _BookingPageState extends State<BookingPage> {
                   children: [
                     Container(
                       child: Material(
-                        elevation: 5,
+                        elevation: 2,
                         borderRadius: BorderRadius.circular(10.0),
                         color: backgroundColor,
+                        // color: Color(0xFF),
                         child: InkWell(
                           onTap: () {
                             Navigator.push(
@@ -80,7 +81,7 @@ class _BookingPageState extends State<BookingPage> {
                     ),
                     Container(
                       child: Material(
-                        elevation: 5,
+                        elevation: 2,
                         borderRadius: BorderRadius.circular(10.0),
                         color: backgroundColor,
                         child: InkWell(
@@ -97,7 +98,7 @@ class _BookingPageState extends State<BookingPage> {
                             children: [
                               Icon(
                                 Icons.sports_tennis,
-                                color: Colors.red[800],
+                                color: Colors.brown,
                                 size: 50.0,
                               ),
                               SizedBox(
@@ -116,7 +117,7 @@ class _BookingPageState extends State<BookingPage> {
                     ),
                     Container(
                       child: Material(
-                        elevation: 5,
+                        elevation: 2,
                         borderRadius: BorderRadius.circular(10.0),
                         color: backgroundColor,
                         child: InkWell(
@@ -152,7 +153,7 @@ class _BookingPageState extends State<BookingPage> {
                     ),
                     Container(
                       child: Material(
-                        elevation: 5,
+                        elevation: 2,
                         borderRadius: BorderRadius.circular(10.0),
                         color: backgroundColor,
                         child: InkWell(
@@ -188,7 +189,7 @@ class _BookingPageState extends State<BookingPage> {
                     ),
                     Container(
                       child: Material(
-                        elevation: 5,
+                        elevation: 2,
                         borderRadius: BorderRadius.circular(10.0),
                         color: backgroundColor,
                         child: InkWell(
@@ -224,7 +225,7 @@ class _BookingPageState extends State<BookingPage> {
                     ),
                     Container(
                       child: Material(
-                        elevation: 5,
+                        elevation: 2,
                         borderRadius: BorderRadius.circular(10.0),
                         color: backgroundColor,
                         child: InkWell(
@@ -259,7 +260,7 @@ class _BookingPageState extends State<BookingPage> {
                     ),
                     Container(
                       child: Material(
-                        elevation: 5,
+                        elevation: 2,
                         borderRadius: BorderRadius.circular(10.0),
                         color: backgroundColor,
                         child: InkWell(
@@ -276,7 +277,7 @@ class _BookingPageState extends State<BookingPage> {
                             children: [
                               Icon(
                                 Icons.golf_course,
-                                color: Colors.yellow[600],
+                                color: Colors.green[900],
                                 size: 50.0,
                               ),
                               SizedBox(
@@ -295,7 +296,7 @@ class _BookingPageState extends State<BookingPage> {
                     ),
                     Container(
                       child: Material(
-                        elevation: 5,
+                        elevation: 2,
                         borderRadius: BorderRadius.circular(10.0),
                         color: backgroundColor,
                         child: InkWell(
@@ -304,7 +305,7 @@ class _BookingPageState extends State<BookingPage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) =>
-                                      BookingPage2(sportName: 'E-Games'),
+                                      BookingPage2(sportName: 'E-Sports'),
                                 ));
                           },
                           child: Column(
@@ -318,7 +319,7 @@ class _BookingPageState extends State<BookingPage> {
                                 height: 10.0,
                               ),
                               Text(
-                                'E-Games',
+                                'E-Sports',
                                 style: TextStyle(
                                   fontSize: 20.0,
                                 ),

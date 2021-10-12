@@ -30,5 +30,3 @@ var memberMediumTextStyle = TextStyle(
   color: Colors.grey.shade700,
   fontSize: 18,
 );
-
-
