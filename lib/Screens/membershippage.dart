@@ -1,17 +1,147 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:club_hub/constants.dart';
 import 'package:club_hub/utilites/slidertrackshape.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:intl/intl.dart';
+import 'bookingpage2.dart';
 
 class MembershipPage extends StatefulWidget {
-  const MembershipPage({Key? key}) : super(key: key);
-
   @override
   _MembershipPageState createState() => _MembershipPageState();
 }
 
 class _MembershipPageState extends State<MembershipPage> {
-  int? option = 1;
+  int? option = 0;
+  Razorpay? _razorpay;
+  bool showSpinner = false;
+  late String? _username = '';
+  late String? _phone = '';
+  late String? _userEmail = '';
+  var now = new DateTime.now();
+  late String todaysFormattedDate;
+  late String endDateFormatted;
+  late bool _isMember = false;
+
+  void _getCurrentUSer() async {
+    try {
+      await firebaseFirestore
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get()
+          .then((data) {
+        setState(() {
+          this._username = data.data()!['Name'];
+          this._phone = data.data()!['Phone'];
+          this._userEmail = data.data()!['Email'];
+          this._isMember = data.data()!['isMember'];
+        });
+      });
+    } catch (e) {
+      print(e);
+    }
+
+    print(_username);
+    print(_phone);
+    print(_userEmail);
+  }
+
+  @override
+  void initState() {
+    _getCurrentUSer();
+    super.initState();
+    _razorpay = new Razorpay();
+    _razorpay!.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlerPaymentSuccess);
+    _razorpay!.on(Razorpay.EVENT_PAYMENT_ERROR, _handlerErrorFailure);
+    _razorpay!.on(Razorpay.EVENT_EXTERNAL_WALLET, _handlerExternalWallet);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay!.clear();
+  }
+
+  void _openCheckout() {
+    var options = {
+      'key': 'rzp_test_9Kjyiz2qW5U3Y0',
+      'amount': option! * 100, // enter amount
+      'name': this._username,
+      'description': 'Payment for the Membership',
+      'prefill': {
+        'contact': this._phone,
+        'email': this._userEmail,
+      },
+      'external': {
+        'wallets': ['paytm']
+      },
+    };
+    try {
+      _razorpay!.open(options);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void _handlerPaymentSuccess() async {
+    setState(() {
+      showSpinner = true;
+    });
+
+    try {
+      print('INSIDE SUCCESS PAYMENT');
+      print(FirebaseAuth.instance.currentUser!.uid);
+      int membershipDuration = 0;
+
+      if (option == 2000) {
+        membershipDuration = 180;
+      }
+      if (option == 3500) {
+        membershipDuration = 365;
+      }
+      var formatter = new DateFormat('yyyy-MM-dd');
+      todaysFormattedDate = formatter.format(now).toString();
+      var membershipEndDate = now.add(Duration(days: membershipDuration));
+      endDateFormatted = formatter.format(membershipEndDate).toString();
+      print(todaysFormattedDate);
+      print(endDateFormatted);
+
+      await firebaseFirestore
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+        'isMember': true,
+        'MembershipStartDate': this.todaysFormattedDate,
+        'MembershipEndDate': this.endDateFormatted,
+      });
+
+      setState(() {
+        showSpinner = false;
+      });
+    } catch (e) {
+      print(e);
+    }
+    print('Payment Success');
+    this._isMember = true;
+    Fluttertoast.showToast(
+        msg: "Payment Success",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0);
+  }
+
+  void _handlerErrorFailure() {
+    print('Payment Error');
+  }
+
+  void _handlerExternalWallet() {
+    print('External wallet');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +200,7 @@ class _MembershipPageState extends State<MembershipPage> {
                 thumbShape: RoundSliderThumbShape(enabledThumbRadius: 0.0),
               ),
               child: Slider(
-                value: 0.2,
+                value: 0.02,
                 onChanged: null,
               ),
             ),
@@ -78,57 +208,85 @@ class _MembershipPageState extends State<MembershipPage> {
           SizedBox(
             height: 30,
           ),
-          Text(
-            "Renew your membership",
-            style: memberBoldTextStyle,
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Card(
-            margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-            child: RadioListTile(
-              activeColor: Colors.deepPurple[700],
-              title: Text("6 months membership", style: memberMediumTextStyle),
-              subtitle: Row(
-                children: <Widget>[
-                  Icon(FontAwesomeIcons.rupeeSign),
-                  Text(
-                    "2000",
-                    style: memberTextStyle,
+          Visibility(
+            visible: !_isMember,
+            child: Column(
+              children: [
+                Text(
+                  "Renew your membership",
+                  style: memberBoldTextStyle,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Card(
+                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  child: RadioListTile(
+                    activeColor: Colors.deepPurple[700],
+                    title: Text("6 months membership",
+                        style: memberMediumTextStyle),
+                    subtitle: Row(
+                      children: <Widget>[
+                        Icon(FontAwesomeIcons.rupeeSign),
+                        Text(
+                          "2000",
+                          style: memberTextStyle,
+                        ),
+                      ],
+                    ),
+                    groupValue: option,
+                    value: 2000,
+                    onChanged: (int? value) {
+                      setState(() {
+                        option = value;
+                      });
+                    },
                   ),
-                ],
-              ),
-              groupValue: option,
-              value: 1,
-              onChanged: (int? value) {
-                setState(() {
-                  option = value;
-                });
-              },
-            ),
-          ),
-          Card(
-            margin: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
-            child: RadioListTile(
-              activeColor: Colors.deepPurple[700],
-              title: Text("12 months membership", style: memberMediumTextStyle),
-              subtitle: Row(
-                children: <Widget>[
-                  Icon(FontAwesomeIcons.rupeeSign),
-                  Text(
-                    "3500",
-                    style: memberTextStyle,
+                ),
+                Card(
+                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  child: RadioListTile(
+                    activeColor: Colors.deepPurple[700],
+                    title: Text("12 months membership",
+                        style: memberMediumTextStyle),
+                    subtitle: Row(
+                      children: <Widget>[
+                        Icon(FontAwesomeIcons.rupeeSign),
+                        Text(
+                          "3500",
+                          style: memberTextStyle,
+                        ),
+                      ],
+                    ),
+                    groupValue: option,
+                    value: 3500,
+                    onChanged: (int? value) {
+                      setState(() {
+                        option = value;
+                      });
+                    },
                   ),
-                ],
-              ),
-              groupValue: option,
-              value: 2,
-              onChanged: (int? value) {
-                setState(() {
-                  option = value;
-                });
-              },
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                MaterialButton(
+                  color: Colors.greenAccent[700],
+                  onPressed: () {
+                    if (option == 0) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('Select Membership Duration'),
+                      ));
+                    } else {
+                      // _openCheckout();
+                    }
+                  },
+                  child: Text(
+                    'CONFIRM',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

@@ -1,16 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:club_hub/Screens/pagechange.dart';
-import 'package:club_hub/Screens/payment.dart';
 import 'package:club_hub/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
-// ignore: must_be_immutable
 class BookingPage2 extends StatefulWidget {
   late String sportName;
   BookingPage2({required this.sportName});
@@ -28,16 +27,19 @@ class _BookingPage2State extends State<BookingPage2> {
   bool is1_2Selected = false;
   bool is2_3Selected = false;
   bool is3_4Selected = false;
-  bool isMember = true;
+  bool _isMember = true;
   bool showSpinner = false;
   late String selectedDocument = '';
   late String? selectedDate = '';
   late String? selectedTime = '';
-  late String? username;
-  late String? phone = '';
+  late String? _username;
+  late String? _phone = '';
+  late String? _userEmail = '';
   Map<String, dynamic>? map;
 
-  void getCurrentUSer() async {
+  Razorpay? _razorpay;
+
+  void _getCurrentUSer() async {
     try {
       await firebaseFirestore
           .collection('Users')
@@ -45,19 +47,21 @@ class _BookingPage2State extends State<BookingPage2> {
           .get()
           .then((data) {
         setState(() {
-          this.username = data.data()!['Name'];
-          this.phone = data.data()!['Phone'];
+          this._username = data.data()!['Name'];
+          this._phone = data.data()!['Phone'];
+          this._userEmail = data.data()!['Email'];
         });
       });
     } catch (e) {
       print(e);
     }
 
-    print(username);
-    print(phone);
+    print(_username);
+    print(_phone);
+    print(_userEmail);
   }
 
-  void loadAvailableSeats() async {
+  void _loadAvailableSeats() async {
     await firebaseFirestore
         .collection(widget.sportName)
         .where('date', isEqualTo: selectedDate)
@@ -68,20 +72,142 @@ class _BookingPage2State extends State<BookingPage2> {
       this.seats10_11 = map!['10-11'];
       this.seats11_12 = map!['11-12'];
       this.seats12_1 = map!['12-1'];
+      this.seats1_2 = map!['1-2'];
+      this.seats2_3 = map!['2-3'];
+      this.seats3_4 = map!['3-4'];
 
       if (selectedTime == '10-11') this.seats = seats10_11!;
       if (selectedTime == '11-12') this.seats = seats11_12!;
       if (selectedTime == '12-1') this.seats = seats12_1!;
+      if (selectedTime == '1-2') this.seats = seats1_2!;
+      if (selectedTime == '2-3') this.seats = seats2_3!;
+      if (selectedTime == '3-4') this.seats = seats3_4!;
     });
 
     // seats10_11 = map!['10-11'];
     // print(seats10_11);
   }
 
+  void _openCheckout() {
+    var options = {
+      'key': 'rzp_test_9Kjyiz2qW5U3Y0',
+      'amount': num.parse('150') * 100, // enter amount
+      'name': this._username,
+      'description': 'Payment for the sport',
+      'prefill': {
+        'contact': this._phone,
+        'email': this._userEmail,
+      },
+      'external': {
+        'wallets': ['paytm']
+      },
+    };
+    try {
+      _razorpay!.open(options);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    print('Payment Success');
+    setState(() {
+      showSpinner = true;
+    });
+    try {
+      var docId, doc;
+      Map<String, dynamic> data = <String, dynamic>{
+        'Sport': widget.sportName,
+        'Date': this.selectedDate,
+        'Time': this.selectedTime,
+      };
+
+      await firebaseFirestore
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('Bookings')
+          .doc()
+          .set(data);
+
+      await firebaseFirestore
+          .collection(widget.sportName)
+          .where('date', isEqualTo: selectedDate!)
+          .get()
+          .then((snapshot) {
+        doc = snapshot.docs[0].data();
+        docId = snapshot.docs[0].id;
+        print(docId);
+        print(doc);
+      });
+
+      print(doc['10-11']);
+      print(selectedTime);
+
+      await firebaseFirestore
+          .collection(widget.sportName)
+          .doc(docId)
+          .update({selectedTime!: seats - 1});
+
+      await firebaseFirestore
+          .collection(widget.sportName)
+          .doc(docId)
+          .collection(selectedTime!)
+          .add({'Name': this._username, 'Contact no': this._phone});
+
+      setState(() {
+        showSpinner = false;
+      });
+    } catch (e) {
+      print(e);
+    }
+    Fluttertoast.showToast(
+        msg: "Payment Success",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0);
+  }
+
+  void _handleErrorFailure(PaymentFailureResponse response) {
+    print('Payment Error');
+    Fluttertoast.showToast(
+        msg: "Payment Error",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0);
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    print('External wallet');
+    Fluttertoast.showToast(
+        msg: "External wallet",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.blue,
+        textColor: Colors.white,
+        fontSize: 16.0);
+  }
+
   @override
   void initState() {
-    getCurrentUSer();
+    _getCurrentUSer();
     super.initState();
+    _razorpay = new Razorpay();
+    _razorpay!.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay!.on(Razorpay.EVENT_PAYMENT_ERROR, _handleErrorFailure);
+    _razorpay!.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay!.clear();
   }
 
   @override
@@ -249,7 +375,7 @@ class _BookingPage2State extends State<BookingPage2> {
                     height: 20,
                   ),
                   Text(
-                    isMember ? 'You are a Member!' : 'You are not a Member',
+                    _isMember ? 'You are a Member!' : 'You are not a Member',
                     style: TextStyle(fontSize: 20.0, color: darkPurple),
                   )
                 ],
@@ -291,58 +417,12 @@ class _BookingPage2State extends State<BookingPage2> {
                 ),
                 MaterialButton(
                   onPressed: () async {
-                    setState(() {
-                      showSpinner = true;
-                    });
-                    try {
-                      var docId, doc;
-                      Map<String, dynamic> data = <String, dynamic>{
-                        'Sport': widget.sportName,
-                        'Date': this.selectedDate,
-                        'Time': this.selectedTime,
-                      };
-
-                      await firebaseFirestore
-                          .collection('Users')
-                          .doc(FirebaseAuth.instance.currentUser!.uid)
-                          .collection('Bookings')
-                          .doc()
-                          .set(data);
-
-                      await firebaseFirestore
-                          .collection(widget.sportName)
-                          .where('date', isEqualTo: selectedDate!)
-                          .get()
-                          .then((snapshot) {
-                        doc = snapshot.docs[0].data();
-                        docId = snapshot.docs[0].id;
-                        print(docId);
-                        print(doc);
-                      });
-
-                      print(doc['10-11']);
-                      print(selectedTime);
-
-                      await firebaseFirestore
-                          .collection(widget.sportName)
-                          .doc(docId)
-                          .update({selectedTime!: seats - 1});
-
-                      await firebaseFirestore
-                          .collection(widget.sportName)
-                          .doc(docId)
-                          .collection(selectedTime!)
-                          .add({
-                        'Name': this.username,
-                        'Contact no': this.phone
-                      });
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => Payment()));
-                      setState(() {
-                        showSpinner = false;
-                      });
-                    } catch (e) {
-                      print(e);
+                    if (selectedDate == '' || selectedTime == '') {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('Select Date and Time'),
+                      ));
+                    } else {
+                      _openCheckout();
                     }
                   },
                   minWidth: MediaQuery.of(context).size.width / 2,
@@ -400,7 +480,7 @@ class _BookingPage2State extends State<BookingPage2> {
             this.selectedDocument = documentID;
           },
         );
-        loadAvailableSeats();
+        _loadAvailableSeats();
         print(this.selectedDate);
         print(this.selectedTime);
         await Future.delayed(Duration(seconds: 2));
@@ -497,7 +577,7 @@ class _BookingPage2State extends State<BookingPage2> {
           },
         );
 
-        loadAvailableSeats();
+        _loadAvailableSeats();
         print(this.selectedDate);
         print(this.selectedTime);
         await Future.delayed(Duration(seconds: 2));
