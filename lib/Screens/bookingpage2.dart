@@ -27,7 +27,8 @@ class _BookingPage2State extends State<BookingPage2> {
   bool is1_2Selected = false;
   bool is2_3Selected = false;
   bool is3_4Selected = false;
-  bool _isMember = true;
+  bool _isMember = false;
+  int cost = 0;
   bool showSpinner = false;
   late String selectedDocument = '';
   late String? selectedDate = '';
@@ -50,6 +51,12 @@ class _BookingPage2State extends State<BookingPage2> {
           this._username = data.data()!['Name'];
           this._phone = data.data()!['Phone'];
           this._userEmail = data.data()!['Email'];
+          this._isMember = data.data()!['isMember'];
+          if (this._isMember) {
+            this.cost = 20;
+          } else {
+            this.cost = 150;
+          }
         });
       });
     } catch (e) {
@@ -91,7 +98,7 @@ class _BookingPage2State extends State<BookingPage2> {
   void _openCheckout() {
     var options = {
       'key': 'rzp_test_9Kjyiz2qW5U3Y0',
-      'amount': num.parse('150') * 100, // enter amount
+      'amount': this.cost * 100, // enter amount
       'name': this._username,
       'description': 'Payment for the sport',
       'prefill': {
@@ -318,7 +325,13 @@ class _BookingPage2State extends State<BookingPage2> {
                       ),
                       Text(
                         seats.toString(),
-                        style: TextStyle(fontSize: 20.0),
+                        style: seats > 3
+                            ? TextStyle(
+                                fontSize: 22.0, fontWeight: FontWeight.w500)
+                            : TextStyle(
+                                fontSize: 22.0,
+                                color: Colors.red,
+                                fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -407,7 +420,7 @@ class _BookingPage2State extends State<BookingPage2> {
                                 FontAwesomeIcons.rupeeSign,
                                 size: 15.0,
                               ),
-                              Text('20'),
+                              Text('$cost'),
                             ],
                           )
                         ],
