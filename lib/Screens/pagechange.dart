@@ -1,3 +1,4 @@
+import 'package:club_hub/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:club_hub/Screens/homepage.dart';
@@ -8,6 +9,8 @@ import 'package:club_hub/utilites/scrollphysics.dart';
 import 'package:club_hub/utilites/drawer.dart';
 
 class PageChange extends StatefulWidget {
+  bool? isAdmin;
+  PageChange({required this.isAdmin});
   @override
   _PageChangeState createState() => _PageChangeState();
 }
@@ -57,16 +60,13 @@ class _PageChangeState extends State<PageChange> {
         centerTitle: true,
         title: Text(
           setAppBarName(_selectedIndex),
-          style: TextStyle(
-              fontSize: 40.00,
-              fontWeight: FontWeight.bold,
-              color: Colors.black),
+          style: TextStyle(fontSize: 25.00, color: Colors.black),
         ),
         backgroundColor: Color(0xFFb3c8ff),
+        // backgroundColor: darkPurple,
         leading: Builder(
           builder: (context) => IconButton(
-            icon: Icon(FontAwesomeIcons.bars),
-            color: Colors.black,
+            icon: Icon(FontAwesomeIcons.bars, color: Colors.black),
             onPressed: () {
               Scaffold.of(context).openDrawer();
             },
@@ -82,7 +82,9 @@ class _PageChangeState extends State<PageChange> {
           ),
         ],
       ),
-      drawer: LeftAppDraw(),
+      drawer: LeftAppDraw(
+        isAdmin: widget.isAdmin!,
+      ),
       body: PageView(
         controller: _pageController,
         scrollDirection: Axis.horizontal,
@@ -91,8 +93,9 @@ class _PageChangeState extends State<PageChange> {
         physics: const CustomPageViewScrollPhysics(),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Color(0xFF425DF3),
-        unselectedItemColor: Colors.black,
+        elevation: 10,
+        selectedItemColor: darkPurple,
+        unselectedItemColor: Colors.black54,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const <BottomNavigationBarItem>[
@@ -107,7 +110,7 @@ class _PageChangeState extends State<PageChange> {
             icon: Icon(
               FontAwesomeIcons.calendarCheck,
             ),
-            label: 'Book',
+            label: 'Booking',
             backgroundColor: Color(0xFFb3c8ff),
           ),
           BottomNavigationBarItem(
@@ -119,7 +122,7 @@ class _PageChangeState extends State<PageChange> {
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              FontAwesomeIcons.user,
+              FontAwesomeIcons.userAlt,
             ),
             label: 'Profile',
             backgroundColor: Color(0xFFb3c8ff),
