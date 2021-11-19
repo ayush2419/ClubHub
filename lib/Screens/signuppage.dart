@@ -50,7 +50,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   borderRadius: BorderRadius.circular(10.0),
                   color: Colors.white,
                 ),
-                margin: EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 80.0),
+                margin: EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 40.0),
                 padding: EdgeInsets.all(30.0),
                 child: Column(
                   children: [
@@ -167,7 +167,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                           borderRadius: BorderRadius.circular(5.0),
                         ),
-                        hintText: "password",
+                        hintText: "Password",
                         helperText: 'Enter password',
                       ),
                     ),
@@ -203,62 +203,66 @@ class _SignUpPageState extends State<SignUpPage> {
                   ],
                 ),
               ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 30.0),
-                child: MaterialButton(
-                  padding: EdgeInsets.symmetric(horizontal: 30.0),
-                  onPressed: () async {
-                    if (_password.text != _confirmPassword.text) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Passwords dont match'),
-                        ),
-                      );
-                    } else {
-                      setState(() {
-                        showSpinner = true;
-                      });
-                      try {
-                        await _auth.createUserWithEmailAndPassword(
-                            email: _email.text, password: _password.text);
-                        Map<String, dynamic> data = <String, dynamic>{
-                          "Name": _fullName.text,
-                          "Phone": _phone.text,
-                          "Email": _email.text,
-                          "isMember": false,
-                        };
-
-                        await firebaseFirestore
-                            .collection('Users')
-                            .doc(FirebaseAuth.instance.currentUser!.uid)
-                            .set(data);
-
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (_) => PageChange(
-                        //       isAdmin: false,
-                        //     ),
-                        //   ),
-                        // );
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => IntroductionPage()),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 30.0),
+                  child: MaterialButton(
+                    padding: EdgeInsets.symmetric(horizontal: 30.0),
+                    onPressed: () async {
+                      if (_password.text != _confirmPassword.text) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Passwords don\'t match'),
+                            backgroundColor: Colors.red,
+                          ),
                         );
+                      } else {
                         setState(() {
-                          showSpinner = false;
+                          showSpinner = true;
                         });
-                      } catch (e) {
-                        print(e);
+                        try {
+                          await _auth.createUserWithEmailAndPassword(
+                              email: _email.text, password: _password.text);
+                          Map<String, dynamic> data = <String, dynamic>{
+                            "Name": _fullName.text,
+                            "Phone": _phone.text,
+                            "Email": _email.text,
+                            "isMember": false,
+                          };
+
+                          await firebaseFirestore
+                              .collection('Users')
+                              .doc(FirebaseAuth.instance.currentUser!.uid)
+                              .set(data);
+
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (_) => PageChange(
+                          //       isAdmin: false,
+                          //     ),
+                          //   ),
+                          // );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => IntroductionPage()),
+                          );
+                          setState(() {
+                            showSpinner = false;
+                          });
+                        } catch (e) {
+                          print(e);
+                        }
                       }
-                    }
-                  },
-                  minWidth: MediaQuery.of(context).size.width,
-                  color: purple,
-                  height: 50.0,
-                  child: Text(
-                    'SIGNUP',
-                    style: TextStyle(color: Colors.white),
+                    },
+                    minWidth: MediaQuery.of(context).size.width,
+                    color: purple,
+                    height: 50.0,
+                    child: Text(
+                      'SIGNUP',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
               )

@@ -40,7 +40,7 @@ class _BookingPage2State extends State<BookingPage2> {
 
   Razorpay? _razorpay;
 
-  void _getCurrentUSer() async {
+  void _getCurrentUser() async {
     try {
       await firebaseFirestore
           .collection('Users')
@@ -203,7 +203,7 @@ class _BookingPage2State extends State<BookingPage2> {
 
   @override
   void initState() {
-    _getCurrentUSer();
+    _getCurrentUser();
     super.initState();
     _razorpay = new Razorpay();
     _razorpay!.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
@@ -229,255 +229,258 @@ class _BookingPage2State extends State<BookingPage2> {
           ),
           backgroundColor: tileColor,
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              margin: EdgeInsets.all(40.0),
-              child: Column(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Select Date',
+        body: SingleChildScrollView(
+          physics: ClampingScrollPhysics(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                margin: EdgeInsets.all(40.0),
+                child: Column(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Select Date',
+                            style: TextStyle(
+                                fontSize: 20.0,
+                                color: darkPurple,
+                                fontWeight: FontWeight.w500)),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        StreamBuilder(
+                          stream: firebaseFirestore
+                              .collection(widget.sportName)
+                              .snapshots(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (!snapshot.hasData) {
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            return GridView.count(
+                              shrinkWrap: true,
+                              physics: ClampingScrollPhysics(),
+                              crossAxisCount: 5,
+                              mainAxisSpacing: 10.0,
+                              childAspectRatio: 1,
+                              crossAxisSpacing: 10.0,
+                              children: snapshot.data!.docs.map((document) {
+                                return GestureDetector(
+                                  child:
+                                      dateSelector(document['date'], document.id),
+                                );
+                              }).toList(),
+                            );
+                          },
+                        ),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        Text(
+                          'Select timing',
                           style: TextStyle(
                               fontSize: 20.0,
                               color: darkPurple,
-                              fontWeight: FontWeight.w500)),
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      StreamBuilder(
-                        stream: firebaseFirestore
-                            .collection(widget.sportName)
-                            .snapshots(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (!snapshot.hasData) {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          return GridView.count(
-                            shrinkWrap: true,
-                            physics: ClampingScrollPhysics(),
-                            crossAxisCount: 5,
-                            mainAxisSpacing: 10.0,
-                            childAspectRatio: 1,
-                            crossAxisSpacing: 10.0,
-                            children: snapshot.data!.docs.map((document) {
-                              return GestureDetector(
-                                child:
-                                    dateSelector(document['date'], document.id),
-                              );
-                            }).toList(),
-                          );
-                        },
-                      ),
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      Text(
-                        'Select timing',
-                        style: TextStyle(
-                            fontSize: 20.0,
-                            color: darkPurple,
-                            fontWeight: FontWeight.w500),
-                      ),
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      GridView.count(
-                        shrinkWrap: true,
-                        physics: ClampingScrollPhysics(),
-                        crossAxisCount: 5,
-                        mainAxisSpacing: 10.0,
-                        childAspectRatio: 1,
-                        crossAxisSpacing: 10.0,
-                        children: [
-                          slotSelector('10-11', is10_11Selected),
-                          slotSelector('11-12', is11_12Selected),
-                          slotSelector('12-1', is12_1Selected),
-                          slotSelector('1-2', is1_2Selected),
-                          slotSelector('2-3', is2_3Selected),
-                          slotSelector('3-4', is3_4Selected),
-                        ],
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10.0),
-                  Divider(
-                    color: tileColor,
-                    thickness: 1.5,
-                  ),
-                  SizedBox(height: 10.0),
-                  Column(
-                    children: [
-                      Text(
-                        'Available Seats',
-                        style: TextStyle(
-                            fontSize: 20.0,
-                            color: darkPurple,
-                            fontWeight: FontWeight.w500),
-                      ),
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      Text(
-                        seats.toString(),
-                        style: seats > 3
-                            ? TextStyle(
-                                fontSize: 22.0, fontWeight: FontWeight.w500)
-                            : TextStyle(
-                                fontSize: 22.0,
-                                color: Colors.red,
-                                fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 15.0),
-                  Divider(
-                    color: tileColor,
-                    thickness: 1.5,
-                  ),
-                  SizedBox(height: 15.0),
-                  Text(
-                    'Pricing',
-                    style: TextStyle(
-                        fontSize: 20.0,
-                        color: darkPurple,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  Container(
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.fromLTRB(40.0, 20.0, 40.0, 20.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            color: darkPurple,
-                          ),
-                          child: Text(
-                            'Member : Rs20',
-                            style:
-                                TextStyle(fontSize: 20.0, color: Colors.white),
-                          ),
+                              fontWeight: FontWeight.w500),
                         ),
                         SizedBox(
-                          height: 10,
+                          height: 20.0,
                         ),
-                        Container(
-                          padding: EdgeInsets.fromLTRB(40.0, 20.0, 40.0, 20.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            color: purple,
+                        GridView.count(
+                          shrinkWrap: true,
+                          physics: ClampingScrollPhysics(),
+                          crossAxisCount: 5,
+                          mainAxisSpacing: 10.0,
+                          childAspectRatio: 1,
+                          crossAxisSpacing: 10.0,
+                          children: [
+                            slotSelector('10-11', is10_11Selected),
+                            slotSelector('11-12', is11_12Selected),
+                            slotSelector('12-1', is12_1Selected),
+                            slotSelector('1-2', is1_2Selected),
+                            slotSelector('2-3', is2_3Selected),
+                            slotSelector('3-4', is3_4Selected),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10.0),
+                    Divider(
+                      color: tileColor,
+                      thickness: 1.5,
+                    ),
+                    SizedBox(height: 10.0),
+                    Column(
+                      children: [
+                        Text(
+                          'Available Seats',
+                          style: TextStyle(
+                              fontSize: 20.0,
+                              color: darkPurple,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        Text(
+                          seats.toString(),
+                          style: seats > 3
+                              ? TextStyle(
+                                  fontSize: 22.0, fontWeight: FontWeight.w500)
+                              : TextStyle(
+                                  fontSize: 22.0,
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 15.0),
+                    Divider(
+                      color: tileColor,
+                      thickness: 1.5,
+                    ),
+                    SizedBox(height: 15.0),
+                    Text(
+                      'Pricing',
+                      style: TextStyle(
+                          fontSize: 20.0,
+                          color: darkPurple,
+                          fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    Container(
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.fromLTRB(40.0, 20.0, 40.0, 20.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              color: darkPurple,
+                            ),
+                            child: Text(
+                              'Member : Rs20',
+                              style:
+                                  TextStyle(fontSize: 20.0, color: Colors.white),
+                            ),
                           ),
-                          child: Text(
-                            'Guest : Rs 150',
-                            style:
-                                TextStyle(fontSize: 20.0, color: Colors.white),
+                          SizedBox(
+                            height: 10,
                           ),
+                          Container(
+                            padding: EdgeInsets.fromLTRB(40.0, 20.0, 40.0, 20.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              color: purple,
+                            ),
+                            child: Text(
+                              'Guest : Rs 150',
+                              style:
+                                  TextStyle(fontSize: 20.0, color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      _isMember ? 'You are a Member!' : 'You are not a Member',
+                      style: TextStyle(fontSize: 20.0, color: darkPurple),
+                    )
+                  ],
+                ),
+              ),
+              Row(
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width / 2,
+                    height: 70.0,
+                    color: tileColor,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.account_balance_wallet_rounded,
+                          size: 30.0,
+                        ),
+                        SizedBox(
+                          width: 15.0,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('TOTAL COST'),
+                            Row(
+                              children: [
+                                Icon(
+                                  FontAwesomeIcons.rupeeSign,
+                                  size: 15.0,
+                                ),
+                                Text('$cost'),
+                              ],
+                            )
+                          ],
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 20,
+                  MaterialButton(
+                    onPressed: () async {
+                      if (selectedDate == '' || selectedTime == '') {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Select Date and Time'),
+                        ));
+                      } else {
+                        _openCheckout();
+                      }
+                    },
+                    minWidth: MediaQuery.of(context).size.width / 2,
+                    height: 70.0,
+                    color: Colors.greenAccent[700],
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'PROCEED TO',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  'CONFIRM',
+                                  style: TextStyle(
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          width: 15.0,
+                        ),
+                        Icon(
+                          Icons.arrow_forward,
+                          size: 30.0,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
                   ),
-                  Text(
-                    _isMember ? 'You are a Member!' : 'You are not a Member',
-                    style: TextStyle(fontSize: 20.0, color: darkPurple),
-                  )
                 ],
               ),
-            ),
-            Row(
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width / 2,
-                  height: 70.0,
-                  color: tileColor,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.account_balance_wallet_rounded,
-                        size: 30.0,
-                      ),
-                      SizedBox(
-                        width: 15.0,
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('TOTAL COST'),
-                          Row(
-                            children: [
-                              Icon(
-                                FontAwesomeIcons.rupeeSign,
-                                size: 15.0,
-                              ),
-                              Text('$cost'),
-                            ],
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                MaterialButton(
-                  onPressed: () async {
-                    if (selectedDate == '' || selectedTime == '') {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Select Date and Time'),
-                      ));
-                    } else {
-                      _openCheckout();
-                    }
-                  },
-                  minWidth: MediaQuery.of(context).size.width / 2,
-                  height: 70.0,
-                  color: Colors.greenAccent[700],
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'PROCEED TO',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                'CONFIRM',
-                                style: TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        width: 15.0,
-                      ),
-                      Icon(
-                        Icons.arrow_forward,
-                        size: 30.0,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

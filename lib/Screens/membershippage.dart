@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:club_hub/constants.dart';
 import 'package:club_hub/utilites/slidertrackshape.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:intl/intl.dart';
 import 'bookingpage2.dart';
@@ -202,166 +203,176 @@ class _MembershipPageState extends State<MembershipPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        margin: EdgeInsets.fromLTRB(20.0, 50.0, 20.0, 30.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            // CircleAvatar(
-            //   backgroundImage: NetworkImage("https://www.woolha.com/media/2020/03/eevee.png"),
-            // )
-            SizedBox(
-              width: double.infinity,
-            ),
-            ClipOval(
-              // child:Image.network(
-              //   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTDf__xsU-p0lRPRPRqsfJQm0hsLo4XMOjzw&usqp=CAU',
-              //   width: 120,
-              //   height: 120,
-              //   )
-              child: Image.asset(
-                'assets/profile.jpg',
-                height: 120,
-                width: 120,
-              ),
-            ),
-            Text(
-              "Hi, $_username",
-              style: memberTextStyle,
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Text(
+    return ModalProgressHUD(
+      inAsyncCall: showSpinner,
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Container(
+            margin: EdgeInsets.fromLTRB(20.0, 50.0, 20.0, 30.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  width: double.infinity,
+                ),
                 _isMember
-                    ? "$_membershipType MEMBERSHIP"
-                    : 'NO ACTIVE MEMBERSHIP',
-                style: memberBoldTextStyle),
-            Visibility(
-              visible: _isMember,
-              child: Text(
-                "Valid up to $_membershipEndDate",
-                style: memberSmallTextStyle,
-              ),
+                    ? CircleAvatar(
+                        radius: 52,
+                        backgroundColor: Colors.green,
+                        child: CircleAvatar(
+                          backgroundImage: AssetImage('assets/profile.jpg'),
+                          radius: 50,
+                        ),
+                      )
+                    : 
+                    CircleAvatar(
+                        radius: 52,
+                        backgroundColor: Colors.grey,
+                        child: CircleAvatar(
+                          backgroundImage: AssetImage('assets/profile.jpg'),
+                          radius: 50,
+                        ),
+                      ),
+                SizedBox(
+                  width: double.infinity,
+                  height: 5,
+                ),
+                Text(
+                  "Hi, $_username",
+                  style: memberTextStyle,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                    _isMember
+                        ? "$_membershipType MEMBERSHIP"
+                        : 'NO ACTIVE MEMBERSHIP',
+                    style: memberBoldTextStyle),
+                Visibility(
+                  visible: _isMember,
+                  child: Text(
+                    "Valid up to $_membershipEndDate",
+                    style: memberSmallTextStyle,
+                  ),
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  height: 40,
+                ),
+                _isMember
+                    ? Card(
+                      color: backgroundColor,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        child: InkWell(
+                          borderRadius:BorderRadius.circular(10) ,
+                          onTap: () {},
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ListTile(
+                              leading: Icon(
+                                FontAwesomeIcons.rupeeSign,
+                                color: Colors.black,
+                                size: 35,
+                              ),
+                              title: Center(
+                                child: Text(
+                                  '$_daysLeft days left ',
+                                  style: memberMediumTextStyle,
+                                ),
+                              ),
+                              subtitle: SliderTheme(
+                                data: SliderTheme.of(context).copyWith(
+                                  trackShape: CustomTrackShape(),
+                                  disabledActiveTrackColor: Colors.deepPurple[700],
+                                  disabledInactiveTrackColor: Colors.deepPurple[100],
+                                  thumbShape:
+                                      RoundSliderThumbShape(enabledThumbRadius: 0.0),
+                                ),
+                                child: Slider(
+                                  value: _membershipType == '6 MONTHS'
+                                      ? _daysLeft / 180
+                                      : _daysLeft / 365,
+                                  onChanged: null,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : SizedBox(
+                        height: 20,
+                      ),
+                Visibility(
+                  visible: !_isMember,
+                  child: Column(
+                    children: [
+                      Text(
+                        "Available Memberships",
+                        style: memberBoldTextStyle,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      membershipCard("6 months membership","2000", 2000),
+                      membershipCard("12 months membership","3500", 3500),
+                      SizedBox(
+                        height: 20.0,
+                      ),
+                      MaterialButton(
+                        color: Colors.greenAccent[700],
+                        onPressed: () {
+                          if (option == 0) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text('Select Membership Duration'),
+                            ));
+                          } else {
+                            _openCheckout();
+                          }
+                        },
+                        child: Text(
+                          'CONFIRM',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
 
-            SizedBox(
-              height: 30,
-            ),
-            ListTile(
-              leading: Icon(
-                FontAwesomeIcons.rupeeSign,
-                color: Colors.black,
-                size: 30,
-              ),
-              title: Text(
-                _isMember
-                    ? '$_daysLeft days left in membership'
-                    : 'Get a Membership',
-                style: memberMediumTextStyle,
-              ),
-              subtitle: SliderTheme(
-                data: SliderTheme.of(context).copyWith(
-                  trackShape: CustomTrackShape(),
-                  disabledActiveTrackColor: Colors.deepPurple[700],
-                  disabledInactiveTrackColor: Colors.deepPurple[100],
-                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 0.0),
-                ),
-                child: Slider(
-                  value: _membershipType == '6 MONTHS'
-                      ? _daysLeft / 180
-                      : _daysLeft / 365,
-                  onChanged: null,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            Visibility(
-              visible: !_isMember,
-              child: Column(
-                children: [
-                  Text(
-                    "Available Memberships",
-                    style: memberBoldTextStyle,
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Card(
-                    margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    child: RadioListTile(
-                      activeColor: Colors.deepPurple[700],
-                      title: Text("6 months membership",
-                          style: memberMediumTextStyle),
-                      subtitle: Row(
-                        children: <Widget>[
-                          Icon(FontAwesomeIcons.rupeeSign),
-                          Text(
-                            "2000",
-                            style: memberTextStyle,
-                          ),
-                        ],
-                      ),
-                      groupValue: option,
-                      value: 2000,
-                      onChanged: (int? value) {
-                        setState(() {
-                          option = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Card(
-                    margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    child: RadioListTile(
-                      activeColor: Colors.deepPurple[700],
-                      title: Text("12 months membership",
-                          style: memberMediumTextStyle),
-                      subtitle: Row(
-                        children: <Widget>[
-                          Icon(FontAwesomeIcons.rupeeSign),
-                          Text(
-                            "3500",
-                            style: memberTextStyle,
-                          ),
-                        ],
-                      ),
-                      groupValue: option,
-                      value: 3500,
-                      onChanged: (int? value) {
-                        setState(() {
-                          option = value;
-                        });
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  MaterialButton(
-                    color: Colors.greenAccent[700],
-                    onPressed: () {
-                      if (option == 0) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Select Membership Duration'),
-                        ));
-                      } else {
-                        _openCheckout();
-                      }
-                    },
-                    child: Text(
-                      'CONFIRM',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
+  Card membershipCard(String text, String amount, int value) {
+    return Card(
+      color: backgroundColor,
+      margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      child: RadioListTile(
+        contentPadding:EdgeInsets.symmetric(vertical: 5, horizontal:16),
+        activeColor: Colors.deepPurple[700],
+        title: Text(
+          text,
+          style: memberMediumTextStyle,
+        ),
+        subtitle: Row(
+          children: <Widget>[
+            Icon(FontAwesomeIcons.rupeeSign),
+            Text(
+              amount,
+              style: memberTextStyle,
             ),
           ],
         ),
+        groupValue: option,
+        value: value,
+        onChanged: (int? value) {
+          setState(() {
+            option = value;
+          });
+        },
       ),
     );
   }
