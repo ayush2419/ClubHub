@@ -48,7 +48,7 @@ class _BookingHistoryState extends State<BookingHistory> {
                           ),
                           padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                           margin: EdgeInsets.symmetric(vertical: 10.0),
-                          height: 80.0,
+                          height: 100.0,
                           child: Column(
                             children: [
                               Text(

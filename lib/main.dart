@@ -9,6 +9,7 @@ import 'Screens/bookingpage.dart';
 import 'Screens/membershippage.dart';
 import 'Screens/profilepage.dart';
 import 'Screens/signuppage.dart';
+import 'Screens/aboutus.dart';
 import 'constants.dart';
 
 Future<void> main() async {
