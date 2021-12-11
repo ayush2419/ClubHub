@@ -1,9 +1,11 @@
+import 'package:club_hub/Screens/aboutus.dart';
 import 'package:club_hub/Screens/bookingHistory.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:club_hub/Admin/adminPanel.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:club_hub/constants.dart';
 
 class LeftAppDraw extends StatefulWidget {
   bool isAdmin;
@@ -23,11 +25,14 @@ class _LeftAppDrawState extends State<LeftAppDraw> {
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
+            DrawerHeader(
               decoration: BoxDecoration(
                 color: Color(0xFFb3c8ff),
               ),
-              child: Text('Drawer Header'),
+              child: Text(
+                'ClubHub',
+                style: memberBoldTextStyle.copyWith(fontSize: 30),
+              ),
             ),
             ListTile(
               leading: Icon(
@@ -48,26 +53,38 @@ class _LeftAppDrawState extends State<LeftAppDraw> {
                     MaterialPageRoute(builder: (_) => BookingHistory()));
               },
             ),
+            // ListTile(
+            //   leading: Icon(
+            //     FontAwesomeIcons.rupeeSign,
+            //   ),
+            //   title: const Text('Membership'),
+            //   onTap: () {
+            //     Navigator.push(context,
+            //         MaterialPageRoute(builder: (_) => PageChange(isAdmin: widget.isAdmin,)));
+            //     // Navigator.pop(context);
+            //     // Navigator.pushNamed(context, '/membership');
+            //     // Navigator.pop(context);
+            //   },
+            // ),
+            // ListTile(
+            //   leading: Icon(
+            //     FontAwesomeIcons.user,
+            //   ),
+            //   title: const Text('Profile'),
+            //   onTap: () {
+            //     // Update the state of the app.
+            //     // ...
+            //     Navigator.pop(context);
+            //   },
+            // ),
             ListTile(
               leading: Icon(
-                FontAwesomeIcons.rupeeSign,
+                FontAwesomeIcons.info,
               ),
-              title: const Text('Membership'),
+              title: const Text('About Us'),
               onTap: () {
-                // Update the state of the app.
-                // ...
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                FontAwesomeIcons.user,
-              ),
-              title: const Text('Profile'),
-              onTap: () {
-                // Update the state of the app.
-                // ...
-                Navigator.pop(context);
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => AboutUs()));
               },
             ),
             Visibility(
@@ -83,6 +100,7 @@ class _LeftAppDrawState extends State<LeftAppDraw> {
                 },
               ),
             ),
+
             ListTile(
               leading: Icon(Icons.logout),
               title: const Text('Log Out'),

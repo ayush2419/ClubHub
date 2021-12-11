@@ -54,7 +54,7 @@ class _AdminPanelState extends State<AdminPanel> {
                 MaterialPageRoute(
                     builder: (_) => PageChange(
                           isAdmin: true,
-                        )),
+                        ),),
               );
             },
             icon: Icon(Icons.home),
@@ -66,7 +66,7 @@ class _AdminPanelState extends State<AdminPanel> {
         child: SingleChildScrollView(
           physics: ClampingScrollPhysics(),
           child: Container(
-            margin: EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 30.0),
+            margin: EdgeInsets.fromLTRB(40.0, 20, 40.0, 30.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:club_hub/Screens/bookingpage.dart';
 import 'package:club_hub/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -161,6 +162,8 @@ class _BookingPage2State extends State<BookingPage2> {
           .collection(selectedTime!)
           .add({'Name': this._username, 'Contact no': this._phone});
 
+      Navigator.pop(context);
+
       setState(() {
         showSpinner = false;
       });
@@ -269,8 +272,8 @@ class _BookingPage2State extends State<BookingPage2> {
                               crossAxisSpacing: 10.0,
                               children: snapshot.data!.docs.map((document) {
                                 return GestureDetector(
-                                  child:
-                                      dateSelector(document['date'], document.id),
+                                  child: dateSelector(
+                                      document['date'], document.id),
                                 );
                               }).toList(),
                             );
@@ -357,30 +360,32 @@ class _BookingPage2State extends State<BookingPage2> {
                       child: Column(
                         children: [
                           Container(
-                            padding: EdgeInsets.fromLTRB(40.0, 20.0, 40.0, 20.0),
+                            padding:
+                                EdgeInsets.fromLTRB(40.0, 20.0, 40.0, 20.0),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10.0),
                               color: darkPurple,
                             ),
                             child: Text(
                               'Member : Rs20',
-                              style:
-                                  TextStyle(fontSize: 20.0, color: Colors.white),
+                              style: TextStyle(
+                                  fontSize: 20.0, color: Colors.white),
                             ),
                           ),
                           SizedBox(
                             height: 10,
                           ),
                           Container(
-                            padding: EdgeInsets.fromLTRB(40.0, 20.0, 40.0, 20.0),
+                            padding:
+                                EdgeInsets.fromLTRB(40.0, 20.0, 40.0, 20.0),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10.0),
                               color: purple,
                             ),
                             child: Text(
                               'Guest : Rs 150',
-                              style:
-                                  TextStyle(fontSize: 20.0, color: Colors.white),
+                              style: TextStyle(
+                                  fontSize: 20.0, color: Colors.white),
                             ),
                           ),
                         ],
