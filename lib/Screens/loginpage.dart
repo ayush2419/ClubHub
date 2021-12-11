@@ -134,8 +134,8 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                   borderRadius: BorderRadius.circular(5.0),
                                 ),
-                                hintText: "Email / Phone",
-                                helperText: 'Enter email / phone'),
+                                hintText: "Email",
+                                helperText: 'Enter email'),
                           ),
                         ),
                         Expanded(

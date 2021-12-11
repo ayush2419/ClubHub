@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:club_hub/Admin/adminPanel.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:club_hub/constants.dart';
 
 class LeftAppDraw extends StatefulWidget {
   bool isAdmin;
@@ -24,11 +25,14 @@ class _LeftAppDrawState extends State<LeftAppDraw> {
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
+            DrawerHeader(
               decoration: BoxDecoration(
                 color: Color(0xFFb3c8ff),
               ),
-              child: Text('Drawer Header'),
+              child: Text(
+                'ClubHub',
+                style: memberBoldTextStyle.copyWith(fontSize: 30),
+              ),
             ),
             ListTile(
               leading: Icon(
