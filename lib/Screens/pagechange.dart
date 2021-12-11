@@ -9,7 +9,7 @@ import 'package:club_hub/utilites/scrollphysics.dart';
 import 'package:club_hub/utilites/drawer.dart';
 
 class PageChange extends StatefulWidget {
-  bool? isAdmin;
+  bool isAdmin;
   PageChange({required this.isAdmin});
   @override
   _PageChangeState createState() => _PageChangeState();
