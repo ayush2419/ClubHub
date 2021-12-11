@@ -72,15 +72,15 @@ class _PageChangeState extends State<PageChange> {
             },
           ),
         ),
-        actions: [
-          Icon(
-            FontAwesomeIcons.ellipsisV,
-            color: Colors.black,
-          ),
-          SizedBox(
-            width: 15.00,
-          ),
-        ],
+        // actions: [
+        //   Icon(
+        //     FontAwesomeIcons.ellipsisV,
+        //     color: Colors.black,
+        //   ),
+        //   SizedBox(
+        //     width: 15.00,
+        //   ),
+        // ],
       ),
       drawer: LeftAppDraw(
         isAdmin: widget.isAdmin!,
