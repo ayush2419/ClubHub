@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:club_hub/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:email_validator/email_validator.dart';
 
 final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
@@ -25,6 +26,7 @@ class _SignUpPageState extends State<SignUpPage> {
   bool showSpinner = false;
 
   @override
+  String _errorMessage = '';
   Widget build(BuildContext context) {
     return ModalProgressHUD(
       inAsyncCall: showSpinner,
@@ -87,6 +89,9 @@ class _SignUpPageState extends State<SignUpPage> {
                     TextFormField(
                       controller: _email,
                       keyboardType: TextInputType.emailAddress,
+                      onChanged: (value) {
+                        validateEmail(_email.text);
+                      },
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Enter value';
@@ -210,10 +215,54 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: MaterialButton(
                     padding: EdgeInsets.symmetric(horizontal: 30.0),
                     onPressed: () async {
-                      if (_password.text != _confirmPassword.text) {
+                      if (_fullName.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please enter your Name'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } else if (_email.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please enter your email id'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } else if (_phone.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please enter your Phone number'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } else if (_phone.text.length < 10) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please enter correct phone number'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } else if (_password.text.isEmpty ||
+                          _confirmPassword.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content:
+                                Text('Please enter password in both fields'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } else if (_password.text != _confirmPassword.text) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text('Passwords don\'t match'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } else if (_errorMessage != "") {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(_errorMessage),
                             backgroundColor: Colors.red,
                           ),
                         );
@@ -246,7 +295,8 @@ class _SignUpPageState extends State<SignUpPage> {
                           // );
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => IntroductionPage()),
+                            MaterialPageRoute(
+                                builder: (_) => IntroductionPage()),
                           );
                           setState(() {
                             showSpinner = false;
@@ -271,5 +321,21 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
       ),
     );
+  }
+
+  void validateEmail(String val) {
+    if (val.isEmpty) {
+      setState(() {
+        _errorMessage = "Email can not be empty";
+      });
+    } else if (!EmailValidator.validate(val, true)) {
+      setState(() {
+        _errorMessage = "Invalid Email Address";
+      });
+    } else {
+      setState(() {
+        _errorMessage = "";
+      });
+    }
   }
 }

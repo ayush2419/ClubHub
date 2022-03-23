@@ -7,6 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:club_hub/constants.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:email_validator/email_validator.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -17,9 +19,14 @@ class _LoginPageState extends State<LoginPage> {
   late String _email;
   late String _password;
   final _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
   bool showSpinner = false;
 
   @override
+  String _errorMessage = '';
+  String _passCheck = "";
+  String helpTextEmail = "Enter email";
+  String helpTextPassword = "Enter password";
   Widget build(BuildContext context) {
     double maxHeight =
         MediaQuery.of(context).orientation == Orientation.portrait
@@ -98,50 +105,54 @@ class _LoginPageState extends State<LoginPage> {
                     child: Column(
                       children: [
                         Expanded(
-                          flex:3,
+                          flex: 3,
                           child: Text(
                             'Log In',
                             style: TextStyle(
-                                fontSize: 25.0,
-                                fontWeight: FontWeight.w500),
+                                fontSize: 25.0, fontWeight: FontWeight.w500),
                           ),
                         ),
                         Expanded(
                           child: SizedBox(
-                            // height: 30.0,
-                          ),
+                              // height: 30.0,
+                              ),
                         ),
                         Expanded(
                           flex: 5,
                           child: TextField(
                             onChanged: (value) {
                               this._email = value;
+                              validateEmail(_email);
+                              setState(() {
+                                helpTextEmail = '';
+                              });
                             },
                             decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: purple,
-                                  ),
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: purple,
                                 ),
-                                focusedErrorBorder: new OutlineInputBorder(
-                                  borderSide: new BorderSide(
-                                    color: Colors.red,
-                                  ),
+                              ),
+                              focusedErrorBorder: new OutlineInputBorder(
+                                borderSide: new BorderSide(
+                                  color: Colors.red,
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: purple,
-                                  ),
-                                  borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: purple,
                                 ),
-                                hintText: "Email",
-                                helperText: 'Enter email'),
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              hintText: "Email",
+                              helperText: helpTextEmail,
+                            ),
                           ),
                         ),
                         Expanded(
                           child: SizedBox(
-                            // height: 30.0,
-                          ),
+                              // height: 30.0,
+                              ),
                         ),
                         Expanded(
                           flex: 5,
@@ -149,6 +160,12 @@ class _LoginPageState extends State<LoginPage> {
                             obscureText: true,
                             onChanged: (value) {
                               this._password = value;
+                              if (value.isEmpty) {
+                                _passCheck = "Please enter the Password";
+                              }
+                              setState(() {
+                                helpTextPassword = "";
+                              });
                             },
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
@@ -168,7 +185,7 @@ class _LoginPageState extends State<LoginPage> {
                                 borderRadius: BorderRadius.circular(5.0),
                               ),
                               hintText: "Password",
-                              helperText: 'Enter password',
+                              helperText: helpTextPassword,
                             ),
                           ),
                         ),
@@ -183,34 +200,123 @@ class _LoginPageState extends State<LoginPage> {
                         setState(() {
                           showSpinner = true;
                         });
-                        try {
-                          final user = await _auth.signInWithEmailAndPassword(
-                              email: _email, password: _password);
-
-                          if (user != null) {
-                            print(user);
-                            print('Signed In successfully!!!');
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (_) => PageChange(
-                            //       isAdmin: false,
-                            //     ),
-                            //   ),
-                            // );
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => IntroductionPage(),
-                              ),
-                            );
-                            setState(() {
-                              showSpinner = false;
-                            });
+                        if (_errorMessage != "") {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(_errorMessage),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          setState(() {
+                            showSpinner = false;
+                          });
+                        } else if (_passCheck != "") {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(_passCheck),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          setState(() {
+                            showSpinner = false;
+                          });
+                        } else {
+                          try {
+                            final user = await _auth.signInWithEmailAndPassword(
+                                email: _email, password: _password);
+                            if (user != null) {
+                              print(user);
+                              print('Signed In successfully!!!');
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (_) => PageChange(
+                              //       isAdmin: false,
+                              //     ),
+                              //   ),
+                              // );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => IntroductionPage(),
+                                ),
+                              );
+                              setState(() {
+                                showSpinner = false;
+                              });
+                            }
+                          } on FirebaseAuthException catch (e) {
+                            if (e.code == 'user-not-found') {
+                              print('No user found for that email.');
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text("Error"),
+                                      content: Text(
+                                          'Oops! User with that email id Not Found'),
+                                      actions: [
+                                        TextButton(
+                                          child: Text("Ok"),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            setState(() {
+                                              showSpinner = false;
+                                            });
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  });
+                            } else if (e.code == 'invalid-email') {
+                              print('No user found for that email.');
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text("Error"),
+                                      content: Text(
+                                          "Please enter a correct email id"),
+                                      actions: [
+                                        TextButton(
+                                          child: Text("Ok"),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            setState(() {
+                                              showSpinner = false;
+                                            });
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  });
+                            } else if (e.code == 'wrong-password') {
+                              print('Wrong password provided for that user.');
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text("Error"),
+                                      content: Text('Wrong password'),
+                                      actions: [
+                                        TextButton(
+                                          child: Text("Ok"),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            setState(() {
+                                              showSpinner = false;
+                                            });
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  });
+                            }
                           }
-                        } catch (e) {
-                          print(e);
                         }
+                        // catch (e) {
+                        //   print(e);
+                        // }
                       },
                       minWidth: MediaQuery.of(context).size.width,
                       color: purple,
@@ -244,5 +350,21 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  void validateEmail(String val) {
+    if (val.isEmpty) {
+      setState(() {
+        _errorMessage = "Email can not be empty";
+      });
+    } else if (!EmailValidator.validate(val, true)) {
+      setState(() {
+        _errorMessage = "Invalid Email Address";
+      });
+    } else {
+      setState(() {
+        _errorMessage = "";
+      });
+    }
   }
 }

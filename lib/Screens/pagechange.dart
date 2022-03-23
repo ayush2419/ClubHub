@@ -83,7 +83,7 @@ class _PageChangeState extends State<PageChange> {
         // ],
       ),
       drawer: LeftAppDraw(
-        isAdmin: widget.isAdmin!,
+        isAdmin: widget.isAdmin,
       ),
       body: PageView(
         controller: _pageController,
