@@ -22,8 +22,8 @@ class _PageChangeState extends State<PageChange> {
   List<Widget> _screens = [
     HomePage(),
     BookingPage(),
-    MembershipPage(),
-    ProfilePage(),
+    //MembershipPage(),
+    //ProfilePage(),
   ];
 
   //Gives the current screen index (integer value)
